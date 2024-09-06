@@ -72,11 +72,23 @@ def attempt_and_score():
 
 
 def show_leaderboard():
-    """Runs when user selects Leaderboard from main game menu..."""
+    """ Function successfully pulls scores/names/etc from leaderboard
+    Runs when user selects Leaderboard from main game menu..."""
     pass
+
+def post_points_to_scores_db():
+    """Successfully posts points to scores database"""
 
 def show_advanced_stats():
     """Runs when user selects advanced stats from main game menu..."""
+    pass
+
+def access_questions():
+    """Function successfully pulls questions, options and answer keys from db"""
+    pass
+
+def post_points_to_questions_database():
+    """Function successfully posts attempts and points for specific question to db to track if questions are actually easy / hard"""
     pass
 
 def quit():
