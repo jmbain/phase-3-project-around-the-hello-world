@@ -2,13 +2,30 @@ import random
 import time
 
 def run():
-    """This function runs the main game menu, which includes 
-    1. Play Game
-    2. Leaderboard
-    3. Advanced Stats (optional)
-    4. Quit
-    """
-    pass
+    """This function runs the main game menu, which includes"""
+
+    while True:
+        prompt = """
+        ~Around the Hello, World~
+A python/basketball crossover (ha!) cli game
+Select an option:
+1. Play the game
+2. Peep the leaderboard
+3. What's good with stats
+4. Quit aka please no more puns
+>> """
+        option = input(prompt)
+        if option == "1":
+            play()
+        elif option == "2":
+            show_leaderboard()
+        elif option == "3":
+            show_advanced_stats()
+        else: 
+            print("This game broke my ankles")
+            exit()
+
+    
 
 def play():
     """Runs when user selects Play Game from main game menu..."""
