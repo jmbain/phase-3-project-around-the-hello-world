@@ -21,7 +21,7 @@ Have fun and try to rack up points on the leaderboard!
 Select an option:
 1. Play the game
 2. Peep the leaderboard
-3. What's good with stats
+3. Check the numbers
 4. Quit aka please no more puns
 >> """
         option = input(prompt)
