@@ -43,6 +43,32 @@ def play():
 
 def attempt_and_score():
     """Runs when a user attempts a question, function also keeps track of number of attempts and score if correct/incorrect"""
+    score = 0
+    attempt = 1
+    correct_answer = "B"
+    
+    while True:
+        print("What is the correct way to declare a function in Python? A: Function B: Def C: Func D: Declare")
+        user_answer = input("Enter the correct answer: ").upper()
+        
+        if user_answer not in ["A", "B", "C", "D"]:
+            print("")
+            print("To answer this question, enter only using 'A', 'B', 'C', or 'D'")
+            print("")
+            continue
+        
+        if user_answer == correct_answer:
+            score += 2
+            print("")
+            print(f"Correct! You've earned TWO points! Your current score is: {score}!!")
+            print("")
+            break
+        else:
+            score -= 1
+            attempt += 1
+            print("")
+            print(f"Incorrect, please try again. Your current score is: {score}, and you are on attempt number {attempt}.")
+            print("")
 
 
 def show_leaderboard():
