@@ -49,8 +49,8 @@ How to play:
 There are TEN spots, on the court Five TWO-POINT shots, and Five THREE-POINT shots.
 You will start with the Five TWO-POINT shots first, and slowly work your way up to the three point line shots.
 
-- Every time you get an easy question right on the first try, you get TWO points!
-- Every time you get a hard question right on the first try, you get THREE points!
+- Every time you get an easy question right (TWO-POINTER) on the first try, you get TWO points!
+- Every time you get a hard question right (THREE-POINTER) on the first try, you get THREE points!
 
 If you get the question wrong, you will stay in the same spot on the court, and will get a new question. If you get that right,
 you will advance, but you will not get any points for the spot.
@@ -126,8 +126,9 @@ def post_points_to_questions_database():
     pass
 
 def quit():
-    """Runs when user selects quit from main game menu..."""
-    pass
+    """Runs when user selects quit from main game menu"""
+    print("Game is closing. Hope to see you on the court soon!")
+    exit()
 
 
 if __name__ == '__main__':
