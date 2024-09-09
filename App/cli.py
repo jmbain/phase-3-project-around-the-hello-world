@@ -125,11 +125,6 @@ def post_points_to_questions_database():
     """Function successfully posts attempts and points for specific question to db to track if questions are actually easy / hard"""
     pass
 
-def quit():
-    """Runs when user selects quit from main game menu"""
-    print("Game is closing. Hope to see you on the court soon!")
-    exit()
-
 
 if __name__ == '__main__':
     run()
