@@ -35,19 +35,29 @@ def add_score(name, score, accuracy):
 def run():
     """This function runs the main game menu, which includes"""
 
+    create_scores_table()
+
     while True:
         prompt = """
         ~Around the Hello, World~
-A python/basketball crossover (ha!) cli game
+A python/basketball crossover (ha!) cli game!
 
-Around the Hello World is a game that tests your knowledge on python. 
+Around the Hello, World is a game that tests your knowledge on python. 
 
-Everytime you get an easy question right on the first try, you get TWO points!
-Everytime you get a hard question right on the first try, you get THREE points!
+How to play:
 
-If you get the question right on the second or third try, you will get partial points, depending on how easy or hard the question is.
+There are TEN spots, on the court Five TWO-POINT shots, and Five THREE-POINT shots.
+You will start with the Five TWO-POINT shots first, and slowly work your way up to the three point line shots.
 
-Have fun and try to rack up points on the leaderboard!
+- Every time you get an easy question right on the first try, you get TWO points!
+- Every time you get a hard question right on the first try, you get THREE points!
+
+If you get the question wrong, you will stay in the same spot on the court, and will get a new question. If you get that right,
+you will advance, but you will not get any points for the spot.
+
+You can only progress towards the end of the game every time you get the questions right.
+
+Have fun, try to cash in points, and be as accurate as possible from the field!
 
 Select an option:
 1. Play the game
