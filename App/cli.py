@@ -69,9 +69,12 @@ Select an option:
             play()
         elif option == "2":
             show_leaderboard()
-        else: 
+        elif option == "3": 
             print("This game broke my ankles")
             exit()
+        else:
+            print("Enter a number from 1-3 only.")
+    
 
     
 
@@ -110,9 +113,8 @@ def play():
 
 
 def show_leaderboard():
-    """ Function successfully pulls scores/names/etc from leaderboard
+    """ Function successfully pulls scores/names/accuracies from leaderboard
     Runs when user selects Leaderboard from main game menu..."""
-
     
     while True:
         prompt = """
@@ -131,7 +133,6 @@ def show_leaderboard():
             cursor.execute(sql)
             scores = cursor.fetchall()
             print(scores)
-
         elif option == "2":
             # SHOW SQL DATABASE  ACCURACY HERE
             sql = """
@@ -141,12 +142,12 @@ def show_leaderboard():
             cursor.execute(sql)
             accuracies = cursor.fetchall()
             print(accuracies)
-        else: 
+        elif option == "3": 
             print("Returning to main menu...")
             run()
+        else:
+            print("Enter a valid number between 1-3.")
 
-    # Select * ORDER BY score desc
-    # Select * ORDER BY accuracy desc
 
 def post_points_to_scores_db():
     """Successfully posts points to scores database"""
