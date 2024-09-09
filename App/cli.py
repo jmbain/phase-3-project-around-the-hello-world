@@ -1,5 +1,36 @@
 import random
-import time
+import sqlite3
+
+# Creates connection to scores database
+conn = sqlite3.connect('scores.db')
+
+
+def create_scores_table():
+    sql = """
+        CREATE TABLE IF NOT EXISTS scores (
+            id INTEGER PRIMARY KEY,
+            name TEXT,
+            score INTEGER,
+            accuracy REAL
+        )
+    """
+    cursor = conn.cursor()
+    cursor.execute(sql)
+    conn.commit()
+
+
+def add_score(name, score, accuracy):
+    """Adds name, score, and player accuracy to the db"""
+    sql = """
+        INSERT INTO scores (name, score, accuracy)
+        VALUES (?, ?, ?)
+    """
+    cursor = conn.cursor()
+    cursor.execute(sql, [name, score, accuracy])
+    conn.commit()
+
+
+
 
 def run():
     """This function runs the main game menu, which includes"""
@@ -39,9 +70,7 @@ Select an option:
 
 def play():
     """Runs when user selects Play Game from main game menu..."""
-    pass
-
-def attempt_and_score():
+    def attempt_and_score():
     """Runs when a user attempts a question, function also keeps track of number of attempts and score if correct/incorrect"""
     score = 0
     attempt = 1
