@@ -112,7 +112,41 @@ def play():
 def show_leaderboard():
     """ Function successfully pulls scores/names/etc from leaderboard
     Runs when user selects Leaderboard from main game menu..."""
-    pass
+
+    
+    while True:
+        prompt = """
+        Select a leaderboard to view:
+        1. Sort by highest to lowest scores
+        2. Sort by highest to lowest accuracies
+        3. Return to main menu
+        >> """
+        option = input(prompt)
+        if option == "1":
+            # SHOW SQL DATABASE  SCORES HERE
+            sql = """
+                SELECT * FROM leaderboard ORDER BY score desc
+            """
+            cursor = conn.cursor()
+            cursor.execute(sql)
+            scores = cursor.fetchall()
+            print(scores)
+
+        elif option == "2":
+            # SHOW SQL DATABASE  ACCURACY HERE
+            sql = """
+                SELECT * FROM leaderboard ORDER BY accuracy desc
+            """
+            cursor = conn.cursor()
+            cursor.execute(sql)
+            accuracies = cursor.fetchall()
+            print(accuracies)
+        else: 
+            print("Returning to main menu...")
+            run()
+
+    # Select * ORDER BY score desc
+    # Select * ORDER BY accuracy desc
 
 def post_points_to_scores_db():
     """Successfully posts points to scores database"""
