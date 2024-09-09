@@ -33,7 +33,7 @@ def add_score(name, score, accuracy):
 
 
 def run():
-    """This function runs the main game menu, which includes"""
+    """This function runs the main game menu, which includes instructions, play function, view leaderboard, and quit function"""
 
     create_scores_table()
 
@@ -62,16 +62,13 @@ Have fun, try to cash in points, and be as accurate as possible from the field!
 Select an option:
 1. Play the game
 2. Peep the leaderboard
-3. Check the numbers
-4. Quit aka please no more puns
+3. Quit aka please no more puns
 >> """
         option = input(prompt)
         if option == "1":
             play()
         elif option == "2":
             show_leaderboard()
-        elif option == "3":
-            show_advanced_stats()
         else: 
             print("This game broke my ankles")
             exit()
@@ -84,8 +81,10 @@ def play():
     """Runs when a user attempts a question, function also keeps track of number of attempts and score if correct/incorrect"""
     score = 0
     attempt = 1
-    correct_answer = "B"
-    
+    correct_answer = "B" # or correct_answer = questions_answers[1].answer_key ??
+
+
+    # Example code
     while True:
         print("What is the correct way to declare a function in Python? A: Function B: Def C: Func D: Declare")
         user_answer = input("Enter the correct answer: ").upper()
@@ -117,10 +116,6 @@ def show_leaderboard():
 
 def post_points_to_scores_db():
     """Successfully posts points to scores database"""
-
-def show_advanced_stats():
-    """Runs when user selects advanced stats from main game menu..."""
-    pass
 
 def access_questions():
     """Function successfully pulls questions, options and answer keys from db"""
