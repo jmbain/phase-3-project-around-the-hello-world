@@ -2,7 +2,7 @@ import random
 import sqlite3
 
 # Creates connection to scores database
-conn = sqlite3.connect('scores.db')
+conn = sqlite3.connect('leaderboard.db')
 
 
 def create_scores_table():
