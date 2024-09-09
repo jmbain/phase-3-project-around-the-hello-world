@@ -3,6 +3,7 @@ import sqlite3
 
 # Creates connection to scores database
 conn = sqlite3.connect('leaderboard.db')
+# Needs connection to question_answers.db
 
 
 def create_scores_table():
@@ -76,7 +77,7 @@ Select an option:
             print("Enter a number from 1-3 only.")
     
 
-    
+
 
 def play():
     """Runs when user selects Play Game from main game menu..."""
