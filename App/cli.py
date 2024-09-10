@@ -230,12 +230,21 @@ def attempt_and_score():
     """Runs when a user attempts a question, function also keeps track of number of attempts and score if correct/incorrect"""
     score = 0
     attempt = 1
-    correct_answer = "B" # or correct_answer = questions_answers[1].answer_key ??
+    sql = """
+    SELECT question, options FROM questions_answers WHERE difficulty = 'easy';
+    """
+    random.shuffle(sql)
 
+
+    correct_answer = """
+    SELECT answer FROM questions_answers WHERE 
+    """
+
+ 
 
     # Example code
     while True:
-        print("What is the correct way to declare a function in Python? A: Function B: Def C: Func D: Declare")
+        print(sql)
         user_answer = input("Enter the correct answer: ").upper()
         
         if user_answer not in ["A", "B", "C"]:
@@ -251,7 +260,7 @@ def attempt_and_score():
             print("")
             break
         else:
-            score -= 1
+            score = score
             attempt += 1
             print("")
             print(f"Incorrect, please try again. Your current score is: {score}, and you are on attempt number {attempt}.")
