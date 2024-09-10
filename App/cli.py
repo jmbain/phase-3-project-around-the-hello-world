@@ -152,13 +152,12 @@ def show_leaderboard():
         else:
             print("Enter a valid number between 1-3.")
 
+
 def access_questions():
     """Function successfully pulls questions, options and answer keys from db"""
     pass
 
-def post_points_to_questions_database():
-    """Function successfully posts attempts and points for specific question to db to track if questions are actually easy / hard"""
-    pass
+
 
 
 if __name__ == '__main__':
