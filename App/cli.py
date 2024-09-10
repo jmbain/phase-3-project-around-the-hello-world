@@ -81,7 +81,10 @@ Select an option:
 
 def play():
     """Runs when user selects Play Game from main game menu..."""
-    def attempt_and_score():
+    attempt_and_score()
+
+
+def attempt_and_score():
     """Runs when a user attempts a question, function also keeps track of number of attempts and score if correct/incorrect"""
     score = 0
     attempt = 1
@@ -93,9 +96,9 @@ def play():
         print("What is the correct way to declare a function in Python? A: Function B: Def C: Func D: Declare")
         user_answer = input("Enter the correct answer: ").upper()
         
-        if user_answer not in ["A", "B", "C", "D"]:
+        if user_answer not in ["A", "B", "C"]:
             print("")
-            print("To answer this question, enter only using 'A', 'B', 'C', or 'D'")
+            print("To answer this question, enter only using 'A', 'B', or 'C'")
             print("")
             continue
         
