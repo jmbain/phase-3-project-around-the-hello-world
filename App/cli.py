@@ -152,10 +152,6 @@ def show_leaderboard():
         else:
             print("Enter a valid number between 1-3.")
 
-
-def post_points_to_scores_db():
-    """Successfully posts points to scores database"""
-
 def access_questions():
     """Function successfully pulls questions, options and answer keys from db"""
     pass
