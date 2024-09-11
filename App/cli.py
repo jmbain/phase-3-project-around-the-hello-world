@@ -232,49 +232,7 @@ Select an option:
 def play():
     """Runs when user selects Play Game from main game menu..."""
     print("Test code. Your score is ")
-    # access_questions()
-
-
-# def access_questions():
-#     """Function successfully pulls questions, options and answer keys from db"""
-#     connection = sqlite3.connect("questions_answers.db")
-#     cursor = connection.cursor()
-#     sql_pull_easy_questions = """
-#     SELECT * from questions_answers WHERE difficulty = "easy"
-#     """
-#     cursor.execute(sql_pull_easy_questions)
-#     easy_questions = cursor.fetchall()
-
-#     random.shuffle(easy_questions)
-#     print(easy_questions[1])
-#     print(easy_questions[1][1])
-#     print(easy_questions[1][4])
-
-#     # Example code
-#     while True:
-        
-#         print("")
-#         user_answer = input("Enter the correct answer: ").upper()
-        
-#         if user_answer not in ["A", "B", "C"]:
-#             print("")
-#             print("To answer this question, enter only using 'A', 'B', or 'C'")
-#             print("")
-#             continue
-        
-#         if user_answer == easy_questions[1][4]:
-#             score += 2
-#             print("")
-#             print(f"Correct! You've earned TWO points! Your current score is: {score}!!")
-#             print("")
-#             break
-#         else:
-#             score = score
-#             attempt += 1
-#             print("")
-#             print(f"Incorrect, please try again. Your current score is: {score}, and you are on attempt number {attempt}.")
-#             print("")
-
+    timed_mode()
 
 def show_leaderboard():
     """ Function successfully pulls scores/names/accuracies from leaderboard
@@ -299,8 +257,8 @@ def show_leaderboard():
             column_names = [description[0] for description in cursor.description]
             print(tabulate(scores, headers=column_names, tablefmt='grid'))
 
-            cursor.close()
-            conn.close()
+            # cursor.close()
+            # conn.close()
         elif option == "2":
             # SHOW SQL DATABASE  ACCURACY HERE
             sql = """
@@ -312,8 +270,9 @@ def show_leaderboard():
             column_names = [description[0] for description in cursor.description]
             print(tabulate(accuracies, headers=column_names, tablefmt='grid'))
 
-            cursor.close()
-            conn.close()
+            # cursor.close()
+            # conn.close()
+            
         elif option == "3": 
             print("Returning to main menu...")
             run()
@@ -328,8 +287,273 @@ def access_questions():
     """Function successfully pulls questions, options and answer keys from db"""
     pass
 
+def timed_mode():
+    #GAME TIMER STUFF
+    game_start = datetime.datetime.now() #When game starts, save starting timestamp into variable
+    game_start_int = int(game_start.timestamp()) #convert start time into an integer for later checks
+    game_length = 120 #in seconds, will be used to check the delta of start time and the time when a user answers a question
+    current_time = 0 #initializing for latter use, gets reset after every correct answer and is used to end game loop when current time exceeds the start time + the game length
+    #COUNTER STUFF
+    easy_q_counter = 0 # used as the index when accessing the easy_questions list of tuples
+    hard_q_counter = 0 # used as the index when accessing the hard_questions list of tuples
+    q_counter = 0 # used to keep track of questions answered correctly
+    attempt_counter = 0 # used to keep track of all attempts, correct or not, at the game level
+    #SCORE AND POSITION
+    score = 0 #initalizes score to keep track of points earned throughout each game
+    court_position_tracker = 0 # used as the index for the court_ position list
+    #PULL QUESTIONS FROM DB STUFF
+    connection = sqlite3.connect("questions_answers.db")
+    cursor = connection.cursor()
+    # Pull easy questions
+    sql_pull_easy_questions = """
+    SELECT * from questions_answers_v1 WHERE difficulty = "Easy"
+    """
+    cursor.execute(sql_pull_easy_questions)
+    easy_questions = cursor.fetchall()
+    # Pull hard questions
+    sql_pull_hard_questions = """
+    SELECT * from questions_answers_v1 WHERE difficulty = "Hard"
+    """
+    cursor.execute(sql_pull_hard_questions)
+    hard_questions = cursor.fetchall()
 
+    #RANDMIZE QUESTIONS - shuffle is triggered each time the game starts so each time game is played, it is random
+    random.shuffle(easy_questions)
+    random.shuffle(hard_questions)
 
+    #Start of the game loop!!!
+    while game_start_int + game_length > current_time:
+        # q_counter += 1
+        local_attempt_counter = 0
+        while 0 <= q_counter <= 4: #Logic for first 5 questions, location will be "inside arc" of basketball points which means easy questions will be pulled and they will be worth 2 points
+            print(court_position[court_position_tracker]) #moves the user to different parts of the court
+            
+            print(easy_questions[easy_q_counter][1]) #accesses random easy question, dynamic because index is based on a counter and 
+            print(easy_questions[easy_q_counter][2]) #accesses answer options for the random easy question, dynamic because index is based on a counter but same index as the question 
+            
+            user_answer = input("Enter the correct answer: ").upper() # gathers user input, uppercase so user can input a, b, c or d and still match with answer key
+            
+            q_points = 2 # local question points; this is 2 because 
+            
+            # Logic to keep track of # of attempts on a specific question; this is presented if a user answers incorrectly (if incorrect once, local_attempt_tracker is 1 if and incorrect twice on same question, local_attempt_tracker is 2)
+            if local_attempt_counter > 0: 
+                pass
+            else:
+                local_attempt_counter = 0
+
+            if user_answer not in ["A", "B", "C", "D"]: #quality control to ensure inputs are multiple choice options a, b, c or d
+                print("")
+                print("Invalid input! Valid options are 'a', 'b', 'c', or 'd'")
+                print("")
+                continue
+            elif user_answer == easy_questions[easy_q_counter][4]: #checks user input against answer; accesses answer key for the random easy question, dynamic because index is based on a counter but same index as the question and options
+                score += (q_points - local_attempt_counter) #Easy questions are worth 2 points on the first try
+                attempt_counter += 1 #Tracks global attempts over the course of the game
+                q_counter += 1 #Tracks global questions answered successfully over the course of the game
+                easy_q_counter += 1 #Tracks global easy questions answered over the course of the game
+                
+                local_attempt_counter = 0 #Resets local attempt counter every time an answer is correct
+
+                #REMINDER: There are only 10 positions on the court, which end at index 9...
+                court_position_tracker += 1 #Tracks position on court globally, user only advances when answering a question correctly and this changes the index
+                if court_position_tracker == 10: #if index reaches 10 which is out of range...
+                    court_position_tracker = 0 #then reset the tracker to 0
+
+                time_check = datetime.datetime.now() #When game starts, save starting timestamp into variable
+                current_time = int(time_check.timestamp()) #convert start time into an integer for later checks
+                time_left = (game_start_int + game_length) - current_time #calculate time left in the game
+                if time_left <= 0: #if question is answered correctly AND time_left expires, print a final message and call functions to end the game
+                    print("")
+                    print(f"Game over! Your final score is {score}. You answered {q_counter} questions on {attempt_counter} attempts.")
+                    print("")
+                    
+                    name = input("Enter your name in order to make it to the rafters (the leaderboard): ")
+                    accuracy = round((q_counter / attempt_counter) * 100, 2)
+                    add_to_leaderboard(name, score, accuracy)
+
+                    break
+                else: #If question is answered correctly and time is still left, print a pessage with updated score/states and time_left
+                    print("")
+                    print(f"Correct! You've earned {q_points} points! Your current score is: {score}. You've answered {q_counter} questions on {attempt_counter} attempts and have {time_left} seconds left!!")
+                    print("")
+                
+            else: #if answer attempt is incorrect...
+                attempt_counter += 1 #add to global attempt tracker which will be used to calculate accuracy
+                local_attempt_counter +=1 # add to local attempt tracker which will be printed below
+                print("")
+                print(f"Incorrect, please try again. You have attempted this question {local_attempt_counter} times.")
+                print("")
+                
+        while 5 <= q_counter <= 9: #Logic for first 5 questions, location will be "inside arc" of basketball points which means easy questions will be pulled and they will be worth 2 points
+            print(court_position[court_position_tracker]) #moves the user to different parts of the court
+            
+            print(hard_questions[hard_q_counter][1]) #accesses random easy question, dynamic because index is based on a counter and 
+            print(hard_questions[hard_q_counter][2]) #accesses answer options for the random easy question, dynamic because index is based on a counter but same index as the question 
+            
+            user_answer = input("Enter the correct answer: ").upper() # gathers user input, uppercase so user can input a, b, c or d and still match with answer key
+            
+            q_points = 3 # local question points; this is 2 because 
+            
+            # Logic to keep track of # of attempts on a specific question; this is presented if a user answers incorrectly (if incorrect once, local_attempt_tracker is 1 if and incorrect twice on same question, local_attempt_tracker is 2)
+            if local_attempt_counter > 0: 
+                pass
+            else:
+                local_attempt_counter = 0
+
+            if user_answer not in ["A", "B", "C", "D"]: #quality control to ensure inputs are multiple choice options a, b, c or d
+                print("")
+                print("Invalid input! Valid options are 'a', 'b', 'c', or 'd'")
+                print("")
+                continue
+            elif user_answer == hard_questions[hard_q_counter][4]: #checks user input against answer; accesses answer key for the random easy question, dynamic because index is based on a counter but same index as the question and options
+                score += (q_points - local_attempt_counter) #Easy questions are worth 2 points on the first try
+                attempt_counter += 1 #Tracks global attempts over the course of the game
+                q_counter += 1 #Tracks global questions answered successfully over the course of the game
+                hard_q_counter += 1 #Tracks global easy questions answered over the course of the game
+                
+                local_attempt_counter = 0 #Resets local attempt counter every time an answer is correct
+
+                #REMINDER: There are only 10 positions on the court, which end at index 9...
+                court_position_tracker += 1 #Tracks position on court globally, user only advances when answering a question correctly and this changes the index
+                if court_position_tracker == 10: #if index reaches 10 which is out of range...
+                    court_position_tracker = 0 #then reset the tracker to 0
+
+                time_check = datetime.datetime.now() #When game starts, save starting timestamp into variable
+                current_time = int(time_check.timestamp()) #convert start time into an integer for later checks
+                time_left = (game_start_int + game_length) - current_time #calculate time left in the game
+                if time_left <= 0: #if question is answered correctly AND time_left expires, print a final message and call functions to end the game
+                    print("")
+                    print(f"Game over! Your final score is {score}. You answered {q_counter} questions on {attempt_counter} attempts.")
+                    print("")
+                    
+                    name = input("Enter your name in order to make it to the rafters (the leaderboard): ")
+                    #INSERT FUNCTION TO ADD SCORE/ACCURACY TO DB
+                    break
+                else: #If question is answered correctly and time is still left, print a pessage with updated score/states and time_left
+                    print("")
+                    print(f"Correct! You've earned {q_points} points! Your current score is: {score}. You've answered {q_counter} questions on {attempt_counter} attempts and have {time_left} seconds left!!")
+                    print("")
+                
+            else: #if answer attempt is incorrect...
+                attempt_counter += 1 #add to global attempt tracker which will be used to calculate accuracy
+                local_attempt_counter +=1 # add to local attempt tracker which will be printed below
+                print("")
+                print(f"Incorrect, please try again. You have attempted this question {local_attempt_counter} times.")
+                print("")
+
+        while 10 <= q_counter <= 14: #Logic for first 5 questions, location will be "inside arc" of basketball points which means easy questions will be pulled and they will be worth 2 points
+            print(court_position[court_position_tracker]) #moves the user to different parts of the court
+            
+            print(easy_questions[easy_q_counter][1]) #accesses random easy question, dynamic because index is based on a counter and 
+            print(easy_questions[easy_q_counter][2]) #accesses answer options for the random easy question, dynamic because index is based on a counter but same index as the question 
+            
+            user_answer = input("Enter the correct answer: ").upper() # gathers user input, uppercase so user can input a, b, c or d and still match with answer key
+            
+            q_points = 2 # local question points; this is 2 because 
+            
+            # Logic to keep track of # of attempts on a specific question; this is presented if a user answers incorrectly (if incorrect once, local_attempt_tracker is 1 if and incorrect twice on same question, local_attempt_tracker is 2)
+            if local_attempt_counter > 0: 
+                pass
+            else:
+                local_attempt_counter = 0
+
+            if user_answer not in ["A", "B", "C", "D"]: #quality control to ensure inputs are multiple choice options a, b, c or d
+                print("")
+                print("Invalid input! Valid options are 'a', 'b', 'c', or 'd'")
+                print("")
+                continue
+            elif user_answer == easy_questions[easy_q_counter][4]: #checks user input against answer; accesses answer key for the random easy question, dynamic because index is based on a counter but same index as the question and options
+                score += (q_points - local_attempt_counter) #Easy questions are worth 2 points on the first try
+                attempt_counter += 1 #Tracks global attempts over the course of the game
+                q_counter += 1 #Tracks global questions answered successfully over the course of the game
+                easy_q_counter += 1 #Tracks global easy questions answered over the course of the game
+                
+                local_attempt_counter = 0 #Resets local attempt counter every time an answer is correct
+
+                #REMINDER: There are only 10 positions on the court, which end at index 9...
+                court_position_tracker += 1 #Tracks position on court globally, user only advances when answering a question correctly and this changes the index
+                if court_position_tracker == 10: #if index reaches 10 which is out of range...
+                    court_position_tracker = 0 #then reset the tracker to 0
+
+                time_check = datetime.datetime.now() #When game starts, save starting timestamp into variable
+                current_time = int(time_check.timestamp()) #convert start time into an integer for later checks
+                time_left = (game_start_int + game_length) - current_time #calculate time left in the game
+                if time_left <= 0: #if question is answered correctly AND time_left expires, print a final message and call functions to end the game
+                    print("")
+                    print(f"Game over! Your final score is {score}. You answered {q_counter} questions on {attempt_counter} attempts.")
+                    print("")
+
+                    name = input("Enter your name in order to make it to the rafters (the leaderboard): ")
+                    #INSERT FUNCTION TO ADD SCORE/ACCURACY TO DB
+                    break
+                else: #If question is answered correctly and time is still left, print a pessage with updated score/states and time_left
+                    print("")
+                    print(f"Correct! You've earned {q_points} points! Your current score is: {score}. You've answered {q_counter} questions on {attempt_counter} attempts and have {time_left} seconds left!!")
+                    print("")
+                
+            else: #if answer attempt is incorrect...
+                attempt_counter += 1 #add to global attempt tracker which will be used to calculate accuracy
+                local_attempt_counter +=1 # add to local attempt tracker which will be printed below
+                print("")
+                print(f"Incorrect, please try again. You have attempted this question {local_attempt_counter} times.")
+                print("")
+                
+        while 15 <= q_counter <= 19: #Logic for first 5 questions, location will be "inside arc" of basketball points which means easy questions will be pulled and they will be worth 2 points
+            print(court_position[court_position_tracker]) #moves the user to different parts of the court
+            
+            print(hard_questions[hard_q_counter][1]) #accesses random easy question, dynamic because index is based on a counter and 
+            print(hard_questions[hard_q_counter][2]) #accesses answer options for the random easy question, dynamic because index is based on a counter but same index as the question 
+            
+            user_answer = input("Enter the correct answer: ").upper() # gathers user input, uppercase so user can input a, b, c or d and still match with answer key
+            
+            q_points = 3 # local question points; this is 2 because 
+            
+            # Logic to keep track of # of attempts on a specific question; this is presented if a user answers incorrectly (if incorrect once, local_attempt_tracker is 1 if and incorrect twice on same question, local_attempt_tracker is 2)
+            if local_attempt_counter > 0: 
+                pass
+            else:
+                local_attempt_counter = 0
+
+            if user_answer not in ["A", "B", "C", "D"]: #quality control to ensure inputs are multiple choice options a, b, c or d
+                print("")
+                print("Invalid input! Valid options are 'a', 'b', 'c', or 'd'")
+                print("")
+                continue
+            elif user_answer == hard_questions[hard_q_counter][4]: #checks user input against answer; accesses answer key for the random easy question, dynamic because index is based on a counter but same index as the question and options
+                score += q_points #Easy questions are worth 2 points on the first try
+                attempt_counter += 1 #Tracks global attempts over the course of the game
+                q_counter += 1 #Tracks global questions answered successfully over the course of the game
+                hard_q_counter += 1 #Tracks global easy questions answered over the course of the game
+                
+                local_attempt_counter = 0 #Resets local attempt counter every time an answer is correct
+
+                #REMINDER: There are only 10 positions on the court, which end at index 9...
+                court_position_tracker += 1 #Tracks position on court globally, user only advances when answering a question correctly and this changes the index
+                if court_position_tracker == 10: #if index reaches 10 which is out of range...
+                    court_position_tracker = 0 #then reset the tracker to 0
+
+                time_check = datetime.datetime.now() #When game starts, save starting timestamp into variable
+                current_time = int(time_check.timestamp()) #convert start time into an integer for later checks
+                time_left = (game_start_int + game_length) - current_time #calculate time left in the game
+                if time_left <= 0: #if question is answered correctly AND time_left expires, print a final message and call functions to end the game
+                    print("")
+                    print(f"Game over! Your final score is {score}. You answered {q_counter} questions on {attempt_counter} attempts.")
+                    print("")
+
+                    name = input("Enter your name in order to make it to the rafters (the leaderboard): ")
+                    #INSERT FUNCTION TO ADD SCORE/ACCURACY TO DB
+                    break
+                else: #If question is answered correctly and time is still left, print a pessage with updated score/states and time_left
+                    print("")
+                    print(f"Correct! You've earned {q_points} points! Your current score is: {score}. You've answered {q_counter} questions on {attempt_counter} attempts and have {time_left} seconds left!!")
+                    print("")
+                
+            else: #if answer attempt is incorrect...
+                attempt_counter += 1 #add to global attempt tracker which will be used to calculate accuracy
+                local_attempt_counter +=1 # add to local attempt tracker which will be printed below
+                print("")
+                print(f"Incorrect, please try again. You have attempted this question {local_attempt_counter} times.")
+                print("")
 
 
 if __name__ == '__main__':
