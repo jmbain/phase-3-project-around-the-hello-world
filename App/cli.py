@@ -231,7 +231,6 @@ Select an option:
 
 def play():
     """Runs when user selects Play Game from main game menu..."""
-    print("Test code. Your score is ")
     timed_mode()
 
 def show_leaderboard():
