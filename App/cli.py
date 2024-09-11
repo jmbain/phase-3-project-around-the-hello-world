@@ -262,7 +262,7 @@ def show_leaderboard():
         elif option == "2":
             # SHOW SQL DATABASE  ACCURACY HERE
             sql = """
-                SELECT ROW_NUMBER() OVER (ORDER BY score DESC) AS rank, name, accuracy FROM leaderboard;
+                SELECT ROW_NUMBER() OVER (ORDER BY accuracy DESC) AS rank, name, accuracy FROM leaderboard;
             """
             cursor = conn.cursor()
             cursor.execute(sql)
@@ -427,7 +427,9 @@ def timed_mode():
                     print("")
                     
                     name = input("Enter your name in order to make it to the rafters (the leaderboard): ")
-                    #INSERT FUNCTION TO ADD SCORE/ACCURACY TO DB
+                    accuracy = round((q_counter / attempt_counter) * 100, 2)
+                    add_to_leaderboard(name, score, accuracy)
+
                     break
                 else: #If question is answered correctly and time is still left, print a pessage with updated score/states and time_left
                     print("")
@@ -484,7 +486,9 @@ def timed_mode():
                     print("")
 
                     name = input("Enter your name in order to make it to the rafters (the leaderboard): ")
-                    #INSERT FUNCTION TO ADD SCORE/ACCURACY TO DB
+                    accuracy = round((q_counter / attempt_counter) * 100, 2)
+                    add_to_leaderboard(name, score, accuracy)
+
                     break
                 else: #If question is answered correctly and time is still left, print a pessage with updated score/states and time_left
                     print("")
@@ -541,7 +545,9 @@ def timed_mode():
                     print("")
 
                     name = input("Enter your name in order to make it to the rafters (the leaderboard): ")
-                    #INSERT FUNCTION TO ADD SCORE/ACCURACY TO DB
+                    accuracy = round((q_counter / attempt_counter) * 100, 2)
+                    add_to_leaderboard(name, score, accuracy)
+                    
                     break
                 else: #If question is answered correctly and time is still left, print a pessage with updated score/states and time_left
                     print("")
@@ -557,4 +563,5 @@ def timed_mode():
 
 
 if __name__ == '__main__':
-    run()
+    show_leaderboard()
+    # run()
