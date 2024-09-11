@@ -1,9 +1,16 @@
 import random
 import sqlite3
+from tabulate import tabulate
+import time
+import datetime
 
 # Creates connection to scores database
 conn = sqlite3.connect('leaderboard.db')
-# Needs connection to question_answers.db
+
+# Creates connection to question_answers database
+conn2 = sqlite3.connect('questions_answers.db')
+
+
 
 court_position = ("""
 _______________________
@@ -148,9 +155,9 @@ _______________________
 """)
 
 
-def create_scores_table():
+def create_leaderboard():
     sql = """
-        CREATE TABLE IF NOT EXISTS scores (
+        CREATE TABLE IF NOT EXISTS leaderboard (
             id INTEGER PRIMARY KEY,
             name TEXT,
             score INTEGER,
@@ -162,10 +169,10 @@ def create_scores_table():
     conn.commit()
 
 
-def add_score(name, score, accuracy):
-    """Adds name, score, and player accuracy to the db"""
+def add_to_leaderboard(name, score, accuracy):
+    """Adds name, score, and player accuracy to the leaderboard database"""
     sql = """
-        INSERT INTO scores (name, score, accuracy)
+        INSERT INTO leaderboard (name, score, accuracy)
         VALUES (?, ?, ?)
     """
     cursor = conn.cursor()
@@ -178,7 +185,8 @@ def add_score(name, score, accuracy):
 def run():
     """This function runs the main game menu, which includes instructions, play function, view leaderboard, and quit function"""
 
-    create_scores_table()
+    # create_leaderboard()
+    # add_to_leaderboard()
 
     while True:
         prompt = """
@@ -223,48 +231,49 @@ Select an option:
 
 def play():
     """Runs when user selects Play Game from main game menu..."""
-    attempt_and_score()
+    print("Test code. Your score is ")
+    # access_questions()
 
 
-def attempt_and_score():
-    """Runs when a user attempts a question, function also keeps track of number of attempts and score if correct/incorrect"""
-    score = 0
-    attempt = 1
-    sql = """
-    SELECT question, options FROM questions_answers WHERE difficulty = 'easy';
-    """
-    random.shuffle(sql)
+# def access_questions():
+#     """Function successfully pulls questions, options and answer keys from db"""
+#     connection = sqlite3.connect("questions_answers.db")
+#     cursor = connection.cursor()
+#     sql_pull_easy_questions = """
+#     SELECT * from questions_answers WHERE difficulty = "easy"
+#     """
+#     cursor.execute(sql_pull_easy_questions)
+#     easy_questions = cursor.fetchall()
 
+#     random.shuffle(easy_questions)
+#     print(easy_questions[1])
+#     print(easy_questions[1][1])
+#     print(easy_questions[1][4])
 
-    correct_answer = """
-    SELECT answer FROM questions_answers WHERE 
-    """
-
- 
-
-    # Example code
-    while True:
-        print(sql)
-        user_answer = input("Enter the correct answer: ").upper()
+#     # Example code
+#     while True:
         
-        if user_answer not in ["A", "B", "C"]:
-            print("")
-            print("To answer this question, enter only using 'A', 'B', or 'C'")
-            print("")
-            continue
+#         print("")
+#         user_answer = input("Enter the correct answer: ").upper()
         
-        if user_answer == correct_answer:
-            score += 2
-            print("")
-            print(f"Correct! You've earned TWO points! Your current score is: {score}!!")
-            print("")
-            break
-        else:
-            score = score
-            attempt += 1
-            print("")
-            print(f"Incorrect, please try again. Your current score is: {score}, and you are on attempt number {attempt}.")
-            print("")
+#         if user_answer not in ["A", "B", "C"]:
+#             print("")
+#             print("To answer this question, enter only using 'A', 'B', or 'C'")
+#             print("")
+#             continue
+        
+#         if user_answer == easy_questions[1][4]:
+#             score += 2
+#             print("")
+#             print(f"Correct! You've earned TWO points! Your current score is: {score}!!")
+#             print("")
+#             break
+#         else:
+#             score = score
+#             attempt += 1
+#             print("")
+#             print(f"Incorrect, please try again. Your current score is: {score}, and you are on attempt number {attempt}.")
+#             print("")
 
 
 def show_leaderboard():
@@ -282,31 +291,43 @@ def show_leaderboard():
         if option == "1":
             # SHOW SQL DATABASE  SCORES HERE
             sql = """
-                SELECT * FROM leaderboard ORDER BY score desc
+                SELECT ROW_NUMBER() OVER (ORDER BY score DESC) AS rank, name, score FROM leaderboard;
             """
             cursor = conn.cursor()
             cursor.execute(sql)
             scores = cursor.fetchall()
-            print(scores)
+            column_names = [description[0] for description in cursor.description]
+            print(tabulate(scores, headers=column_names, tablefmt='grid'))
+
+            cursor.close()
+            conn.close()
         elif option == "2":
             # SHOW SQL DATABASE  ACCURACY HERE
             sql = """
-                SELECT * FROM leaderboard ORDER BY accuracy desc
+                SELECT ROW_NUMBER() OVER (ORDER BY score DESC) AS rank, name, accuracy FROM leaderboard;
             """
             cursor = conn.cursor()
             cursor.execute(sql)
             accuracies = cursor.fetchall()
-            print(accuracies)
+            column_names = [description[0] for description in cursor.description]
+            print(tabulate(accuracies, headers=column_names, tablefmt='grid'))
+
+            cursor.close()
+            conn.close()
         elif option == "3": 
             print("Returning to main menu...")
             run()
         else:
+            print("")
             print("Enter a valid number between 1-3.")
 
+def game_over():
+    name = input("Enter your name in order to make it to the rafters (the leaderboard): ") 
 
 def access_questions():
     """Function successfully pulls questions, options and answer keys from db"""
     pass
+
 
 
 
