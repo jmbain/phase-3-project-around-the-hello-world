@@ -323,8 +323,18 @@ def timed_mode():
 
     #Start of the game loop!!!
     while game_start_int + game_length > current_time:
-        # q_counter += 1
+        
         local_attempt_counter = 0
+
+        time_check = datetime.datetime.now() #When game starts, save starting timestamp into variable
+        current_time = int(time_check.timestamp()) #convert start time into an integer for later checks
+        time_left = (game_start_int + game_length) - current_time #calculate time left in the game
+        if time_left <= 0: #if question is answered correctly AND time_left expires, print a final message and call functions to end the game
+            print("")
+            print(f"Thanks for playing!")
+            print("")
+            break
+
         while 0 <= q_counter <= 4: #Logic for first 5 questions, location will be "inside arc" of basketball points which means easy questions will be pulled and they will be worth 2 points
             print(court_position[court_position_tracker]) #moves the user to different parts of the court
             
@@ -547,7 +557,7 @@ def timed_mode():
                     name = input("Enter your name in order to make it to the rafters (the leaderboard): ")
                     accuracy = round((q_counter / attempt_counter) * 100, 2)
                     add_to_leaderboard(name, score, accuracy)
-                    
+
                     break
                 else: #If question is answered correctly and time is still left, print a pessage with updated score/states and time_left
                     print("")
@@ -563,5 +573,4 @@ def timed_mode():
 
 
 if __name__ == '__main__':
-    show_leaderboard()
-    # run()
+    run()
